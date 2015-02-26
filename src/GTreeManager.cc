@@ -86,8 +86,8 @@ Bool_t  GTreeManager::TraverseEntries(const UInt_t min, const UInt_t max)
 
     for(UInt_t i=min; i<max; i++)
     {
-        for(Int_t l=0; l<readList.GetEntriesFast(); l++)
-            ((GTree*)readList[l])->GetEntryFast(i);
+
+        GetAndUnpack(i);
 
         eventParameters->SetEventNumber(i);
         countReconstructed = 0;
@@ -232,6 +232,17 @@ Bool_t  GTreeManager::Write(const TNamed* object)
     return kTRUE;
 }
 
+void GTreeManager::GetAndUnpack(const UInt_t event)
+{
+    // read from all trees
+    for(Int_t l=0; l<readList.GetEntriesFast(); l++)
+        ((GTree*)readList[l])->GetEntryFast(event);
+
+    // unpack event in all trees
+    for(Int_t l=0; l<readList.GetEntriesFast(); l++)
+        ((GTree*)readList[l])->Unpack();
+}
+
 
 Bool_t  GTreeManager::TraverseValidEvents_AcquTreeFile()
 {
@@ -363,8 +374,7 @@ Bool_t  GTreeManager::TraverseValidEvents_GoATTreeFile()
             event++;
             if(event>=maxEvent)
                 break;
-            for(Int_t l=0; l<readList.GetEntriesFast(); l++)
-                ((GTree*)readList[l])->GetEntryFast(event);
+            GetAndUnpack(event);
             ProcessEvent();
         }
         if(i!=0)

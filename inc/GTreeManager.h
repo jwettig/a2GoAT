@@ -146,6 +146,7 @@ protected:
             Bool_t  TraverseValidEvents()   {if(IsAcquFile()) return TraverseValidEvents_AcquTreeFile(); return TraverseValidEvents_GoATTreeFile();}
     virtual Bool_t  Write();
             Bool_t  Write(const TNamed* object);
+            void    GetAndUnpack(const UInt_t event);
 
 public:
     GTreeManager();
