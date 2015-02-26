@@ -1,5 +1,8 @@
 #include "GTreePluto.h"
 #include "PParticle.h"
+#include <iostream>
+
+using namespace std;
 
 GTreePluto::GTreePluto(GTreeManager* Manager):
     GTree(Manager, TString("data")),
@@ -12,34 +15,28 @@ GTreePluto::GTreePluto(GTreeManager* Manager):
 GTreePluto::~GTreePluto()
 {}
 
-GTreePluto::ParticleList GTreePluto::GetFinalState() const
+bool IsFinalState(const PParticle* particle) { return particle->GetDaughterIndex() == -1; }
+bool IsBeamParticle(const PParticle* particle) { return particle->ID() > 1000; }
+
+void GTreePluto::Unpack()
 {
-    ParticleList list;
+    finalstate.clear();
+    allparticles.clear();
+    beamparticles.clear();
 
     for( Long64_t i=0;i<PlutoMCTrue->GetEntries(); ++i) {
 
         const PParticle* const particle = dynamic_cast<const PParticle*>((*PlutoMCTrue)[i]);
 
-        if(particle && particle->GetDaughterIndex() == -1)
-            list.push_back(particle);
+        allparticles.emplace_back(particle);
+
+        if(IsFinalState(particle))
+            finalstate.emplace_back(particle);
+
+        if(IsBeamParticle(particle))
+            beamparticles.emplace_back(particle);
+
     }
-
-    return list;
-}
-
-GTreePluto::ParticleList GTreePluto::GetAllParticles() const
-{
-    ParticleList list;
-
-    for( Long64_t i=0;i<PlutoMCTrue->GetEntries(); ++i) {
-
-        const PParticle* const particle = dynamic_cast<const PParticle*>((*PlutoMCTrue)[i]);
-
-        if(particle)
-            list.push_back(particle);
-    }
-
-    return list;
 }
 
 PParticle* GTreePluto::GetMCTrue(const int idx) const throw(std::exception)
@@ -68,10 +65,9 @@ TLorentzVector GTreePluto::GetTrueBeam() const
 
 TLorentzVector GTreePluto::GetTrueBeam(const TLorentzVector target, const int beamID) const
 {
-    ParticleList list = GetAllParticles();
 
-    ParticleList::iterator it = std::find_if(list.begin(), list.end(), [beamID](PParticle const& p){ return p.ID() == beamID; });
-    if (it == list.end())
+    auto it = std::find_if(beamparticles.begin(), beamparticles.end(), [beamID](PParticle const& p){ return p.ID() == beamID; });
+    if (it == beamparticles.end())
         return TLorentzVector(0., 0., 0., 0.);
 
     return (*it)->Vect4() - target;

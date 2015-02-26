@@ -14,6 +14,9 @@ class PParticle;
 
 class  GTreePluto : public GTree
 {
+public:
+    typedef std::list<const PParticle*> ParticleList;
+
 private:
     TClonesArray*   PlutoMCTrue;
     Long64_t        plutoID;
@@ -27,6 +30,10 @@ private:
         }
     } noTree;
 
+    ParticleList finalstate;
+    ParticleList allparticles;
+    ParticleList beamparticles;
+
 protected:
     virtual void    SetBranchAdresses();
     virtual void    SetBranches();
@@ -35,6 +42,7 @@ public:
     GTreePluto(GTreeManager *Manager);
     virtual ~GTreePluto();
 
+    virtual void Unpack();
 
     virtual void                Clear()                 { PlutoMCTrue->Clear(); plutoID=-1; plutoRandomID=1; }
     virtual TClonesArray* 		GetMCTrue()        		{ return PlutoMCTrue; }
@@ -45,10 +53,10 @@ public:
     virtual Long64_t            GetPlutoID()       const     { return plutoID; }
     virtual Long64_t            GetPlutoRandomID() const     { return plutoRandomID; }
 
-    typedef std::list<const PParticle*> ParticleList;
 
-    virtual ParticleList        GetFinalState() const;
-    virtual ParticleList        GetAllParticles() const;
+    virtual const ParticleList&        GetFinalState() const { return finalstate; }
+    virtual const ParticleList&        GetAllParticles() const {return allparticles; }
+    virtual const ParticleList&        GetBeamParticles() const {return beamparticles; }
 
 };
 
