@@ -28,14 +28,14 @@ void GTreePluto::Unpack()
 
         const PParticle* const particle = dynamic_cast<const PParticle*>((*PlutoMCTrue)[i]);
 
-        allparticles.emplace_back(particle);
-
-        if(IsFinalState(particle))
-            finalstate.emplace_back(particle);
-
         if(IsBeamParticle(particle))
             beamparticles.emplace_back(particle);
+        else {
+            allparticles.emplace_back(particle);
 
+            if(IsFinalState(particle))
+                finalstate.emplace_back(particle);
+        }
     }
 }
 
