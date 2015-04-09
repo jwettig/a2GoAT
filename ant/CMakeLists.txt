@@ -93,10 +93,10 @@ foreach(PROG_SRC ${ANT_PROGS})
         )
 
     target_link_libraries(${name}
-        antlib
-        ${LIBS}
-        ${ROOT_LIBRARIES}
+    	antlib
+    	${APLCON_LIBRARIES}
         goatlib
-        ${APLCON_LIBRARIES}
+        ${LIBS}
+    	${ROOT_LIBRARIES}
     )
 endforeach()
