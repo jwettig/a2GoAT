@@ -45,6 +45,8 @@ set(ANT_PHYSICS
     analysis/omega.cc
     analysis/omega_bottomup.h
     analysis/omega_bottomup.cc
+    analysis/pion.h
+    analysis/pion.cc
     analysis/GeoAcceptance.h
     analysis/GeoAcceptance.cc
     analysis/TestAPLCON.h
